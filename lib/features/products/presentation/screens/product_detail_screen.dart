@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/features/cart/presentation/providers/cart_provider.dart';
 import 'package:ecommerce_app/features/products/domain/entities/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +37,21 @@ class ProductDetailScreen extends ConsumerWidget {
               Text(product.description),
               SizedBox(height: 8),
               Text('In stock: ${product.stock}'),
+              SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(cartProvider.notifier).addToCart(product);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Successfullt added to cart'),
+                      ),
+                    );
+                  },
+                  child: Text("Add to cart"),
+                ),
+              ),
             ],
           ),
         ),
