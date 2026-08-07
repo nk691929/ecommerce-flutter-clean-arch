@@ -36,7 +36,7 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
   }
 
   //loading more products after first time
-  Future<void> _loadMore() async {
+  Future<void> loadMore() async {
     if (!_hasMore || _isLoadingMore) return;
 
     _isLoadingMore = true;
