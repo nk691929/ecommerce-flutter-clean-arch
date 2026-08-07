@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/features/products/presentation/providers/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ProductListScreen extends ConsumerStatefulWidget {
   const ProductListScreen({super.key});
@@ -21,7 +22,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(ProductsProvider.notifier).loadMore();
+      ref.read(productsProvider.notifier).loadMore();
     }
   }
 
@@ -33,7 +34,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productAsync = ref.watch(ProductsProvider);
+    final productAsync = ref.watch(productsProvider);
     return Scaffold(
       appBar: AppBar(title: Text("Products")),
       body: productAsync.when(
@@ -52,6 +53,8 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                 title: Text(product.title),
                 subtitle: Text(product.description),
                 trailing: Text(product.price.toString()),
+                onTap: () =>
+                    context.push('/product/${product.id}', extra: product),
               );
             },
           );
