@@ -6,16 +6,17 @@ class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    final themeMode=ref.watch(themeProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: Center(
-        child:SwitchListTile(
+        child: SwitchListTile(
           title: Text('Dark Mode'),
-          value: themeMode==ThemeMode.dark, 
-          onChanged: (_)=>ref.read(themeProvider.notifier).toggle())
-          ),
+          value: themeMode == ThemeMode.dark,
+          onChanged: (_) => ref.read(themeProvider.notifier).toggle(),
+        ),
+      ),
     );
   }
 }
