@@ -7,36 +7,40 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cartItems = ref.watch(cartProvider);
+    final cartAsyn = ref.watch(cartProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Cart')),
-      body: cartItems.isEmpty
-          ? Center(child: Text("No Item in cart"))
-          : ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return ListTile(
-                  leading: Image.network(
-                    item.product.thumbnail,
-                    height: 50,
-                    width: 50,
-                  ),
-                  title: Text(item.product.title),
-                  subtitle: Text(
-                    'Qty ${item.quantity} . ${item.totalPrize.toStringAsFixed(2)}',
-                  ),
-                  trailing: IconButton(
-                    onPressed: () {
-                      ref
-                          .read(cartProvider.notifier)
-                          .removeFromCart(item.product.id);
-                    },
-                    icon: Icon(Icons.delete),
-                  ),
-                );
-              },
-            ),
+      body: cartAsyn.when(
+        data: (cartItems) => cartItems.isEmpty
+            ? Center(child: Text("No Item in cart"))
+            : ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return ListTile(
+                    leading: Image.network(
+                      item.product.thumbnail,
+                      height: 50,
+                      width: 50,
+                    ),
+                    title: Text(item.product.title),
+                    subtitle: Text(
+                      'Qty ${item.quantity} . ${item.totalPrize.toStringAsFixed(2)}',
+                    ),
+                    trailing: IconButton(
+                      onPressed: () {
+                        ref
+                            .read(cartProvider.notifier)
+                            .removeFromCart(item.product.id);
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
+                  );
+                },
+              ),
+        error: (e, stack) => Center(child: Text('Error: $e')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }
