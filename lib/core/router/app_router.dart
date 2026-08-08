@@ -23,11 +23,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state, navigationShell) {
         return Consumer(
           builder: (context, ref, _) {
-            final cartCount = ref.watch(
-              cartProvider.select(
-                (items) => items.fold(0, (sum, item) => sum + item.quantity),
-              ),
-            );
+            final cartAsync = ref.watch(cartProvider);
+            final cartCount =
+                cartAsync.value?.fold(0, (sum, item) => sum + item.quantity) ??
+                0;
 
             return Scaffold(
               body: navigationShell,
