@@ -35,32 +35,75 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     final productAsync = ref.watch(productsProvider);
+    final categories = [
+      'smartphones',
+      'laptops',
+      'fragrances',
+      'skincare',
+      'beauty',
+    ];
     return Scaffold(
-      appBar: AppBar(title: Text("Products")),
-      body: productAsync.when(
-        data: (products) {
-          return ListView.builder(
-            itemCount: products.length,
-            controller: _scrollController,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return ListTile(
-                leading: Image.network(
-                  product.thumbnail,
-                  height: 50,
-                  width: 50,
-                ),
-                title: Text(product.title),
-                subtitle: Text(product.description),
-                trailing: Text(product.price.toString()),
-                onTap: () =>
-                    context.push('/product/${product.id}', extra: product),
-              );
-            },
-          );
-        },
-        error: (error, stack) => Center(child: Text('Error: $error.')),
-        loading: () => Center(child: CircularProgressIndicator()),
+      appBar: AppBar(
+        title: TextField(
+          decoration: const InputDecoration(
+            hint: Text("Search products"),
+            border: InputBorder.none,
+          ),
+          onChanged: (value) {
+            ref.read(productsProvider.notifier).search(value);
+          },
+        ),
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              children: categories.map((cat) {
+                return Padding(
+                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 4),
+                  child: ChoiceChip(
+                    label: Text(cat),
+                    selected: false,
+                    onSelected: (_) => ref
+                        .read(productsProvider.notifier)
+                        .filterByCategory(cat),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: productAsync.when(
+              data: (products) {
+                return ListView.builder(
+                  itemCount: products.length,
+                  controller: _scrollController,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ListTile(
+                      leading: Image.network(
+                        product.thumbnail,
+                        height: 50,
+                        width: 50,
+                      ),
+                      title: Text(product.title),
+                      subtitle: Text(product.description),
+                      trailing: Text(product.price.toString()),
+                      onTap: () =>
+                          context.push('/product/${product.id}', extra: product),
+                    );
+                  },
+                );
+              },
+              error: (error, stack) => Center(child: Text('Error: $error.')),
+              loading: () => Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        ],
       ),
     );
   }
