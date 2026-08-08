@@ -5,5 +5,7 @@ abstract class ProductRepository {
   Future<Result<List<Product>>> getProducts({
     required int skip,
     required int limit,
+    String? query,
+    String? category
   });
 }

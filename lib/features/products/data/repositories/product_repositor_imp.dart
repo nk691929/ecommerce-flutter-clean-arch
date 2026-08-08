@@ -13,11 +13,27 @@ class ProductRepositorImp implements ProductRepository {
   Future<Result<List<Product>>> getProducts({
     required int skip,
     required int limit,
+    String? query,
+    String? category,
   }) async {
     try {
+      final bool isSearching = query != null && query.isNotEmpty;
+      final bool isFiltering = category != null && category.isNotEmpty;
+
+      String endpoint = '/products';
+      if (isSearching) {
+        endpoint = '/products/search';
+      } else if (isFiltering) {
+        endpoint = '/products/category/$category';
+      }
+
       final response = await dio.get(
-        '/products',
-        queryParameters: {'skip': skip, 'limit': limit},
+        endpoint,
+        queryParameters: {
+          'skip': skip,
+          'limit': limit,
+          if (query != null && query.isNotEmpty) 'q': query,
+        },
       );
 
       final List<dynamic> productJson = response.data['products'];
@@ -29,6 +45,7 @@ class ProductRepositorImp implements ProductRepository {
     } on DioException catch (e) {
       return Error(NetworkFailure(e.message ?? "Network Error Occured"));
     } catch (e) {
+      print(e.toString());
       return Error(ParsingFailure('Failed to parse products: $e'));
     }
   }
